@@ -13,10 +13,6 @@ class Product(TimeStamp):
     category    = models.ForeignKey('Category', on_delete=models.CASCADE)
     user        = models.ForeignKey(User, on_delete=models.CASCADE)
     howtouse    = models.JSONField()
-    usage       = models.IntegerField()
-    texture     = models.JSONField()
-    scent       = models.CharField(max_length=45)
-    use_image   = models.JSONField()
     
     class Meta:
         db_table = 'products'
