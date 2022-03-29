@@ -5,18 +5,18 @@ from cores.timestamp import TimeStamp
 
 # Create your models here.
 class Product(TimeStamp):
-    name            = models.CharField(max_length=45)
-    price           = models.CharField(max_length=45)
-    size            = models.CharField(max_length=45)
-    description     = models.TextField(max_length=1000)
-    feeling         = models.CharField(max_length=45)
-    category        = models.ForeignKey('Category', on_delete=models.CASCADE)
-    user            = models.ForeignKey(User, on_delete=models.CASCADE)
-    howtouse        = models.JSONField()
-    quantity        = models.JSONField()
-    texture         = models.JSONField()
-    scent           = models.JSONField()
-    use_image       = models.JSONField()
+    name        = models.CharField(max_length=45)
+    price       = models.CharField(max_length=45)
+    size        = models.CharField(max_length=45)
+    description = models.TextField(max_length=1000)
+    feeling     = models.CharField(max_length=45)
+    category    = models.ForeignKey('Category', on_delete=models.CASCADE)
+    user        = models.ForeignKey(User, on_delete=models.CASCADE)
+    howtouse    = models.JSONField()
+    usage       = models.IntegerField()
+    texture     = models.JSONField()
+    scent       = models.CharField(max_length=45)
+    use_image   = models.JSONField()
     
     class Meta:
         db_table = 'products'
