@@ -11,8 +11,8 @@ class Product(TimeStamp):
     description = models.TextField(max_length=1000)
     feeling     = models.CharField(max_length=45)
     category    = models.ForeignKey('Category', on_delete=models.CASCADE)
-    user        = models.ForeignKey(User, on_delete=models.CASCADE)
     howtouse    = models.JSONField()
+    badge       = models.CharField(max_length=15)
     
     class Meta:
         db_table = 'products'
@@ -56,6 +56,15 @@ class ProductSkintype(models.Model):
 
     class Meta:
         db_table = 'product_skintypes'
+
+class ProductDescription(models.Model):
+    list_description  = models.CharField(max_length=100)
+    nomal_description = models.CharField(max_length=100)
+    nomal_title = models.CharField(max_length=100, null=True)
+    category          = models.ForeignKey('Category', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'product_descriptions'
 
 
 class Review(TimeStamp):
