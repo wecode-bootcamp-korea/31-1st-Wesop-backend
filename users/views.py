@@ -15,6 +15,7 @@ def check_email(request):
     try:
         if not request.method == 'POST':
             return JsonResponse({"message" : "INVALID_METHOD"}, status=405) 
+
         data  = json.loads(request.body)
         email = data['email']
 
@@ -30,6 +31,7 @@ def sign_up(request):
         try:
             if not request.method == 'POST':
                 return JsonResponse({"message" : "INVALID_METHOD"}, status=405) 
+
             data       = json.loads(request.body)
             email      = data['email']
             password   = data['password']
@@ -44,6 +46,7 @@ def sign_up(request):
                 last_name  = last_name,
                 first_name = first_name
             )
+
             return JsonResponse({'message' : 'SUCCESS'}, status = 201)
 
         except ValidationError:
@@ -55,6 +58,7 @@ def log_in(request):
     try:
         if not request.method == 'POST':
             return JsonResponse({"message" : "INVALID_METHOD"}, status=405) 
+            
         data     = json.loads(request.body)
         email    = data['email']
         password = data['password']
@@ -62,11 +66,12 @@ def log_in(request):
         validate_email(email)
         validate_password(password)
 
-        user     = User.objects.get(email = email)
-        token    = jwt.encode({"id" :user.id}, settings.SECRET_KEY, settings.ALGORITHM)
+        user  = User.objects.get(email = email)
+        token = jwt.encode({"id" :user.id}, settings.SECRET_KEY, settings.ALGORITHM)
 
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
                 return JsonResponse({"message" : "INVALID_PASSWORD"}, status=401)
+
         return JsonResponse({"message" : "SUCCESS","token" : token}, status=200)
 
     except User.DoesNotExist:
