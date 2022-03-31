@@ -2,13 +2,13 @@ import re
 
 from django.forms import ValidationError
 
-regex_email             = "^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$"
-regex_password          = "^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+?&]{8,}$"
+EMAIL_REGEX    = "^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$"
+PASSWORD_REGEX = "^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+])[A-Za-z\d!@#$%^&*()_+?&]{8,}$"
 
-def email_validation(email):
-    if not re.match(regex_email, email):
+def validate_email(email):
+    if not re.match(EMAIL_REGEX, email):
         raise ValidationError("INVALID_ERROR")
 
-def password_validation(password):
-    if not re.match(regex_password, password):
+def validate_password(password):
+    if not re.match(PASSWORD_REGEX, password):
         raise ValidationError("INVALID_ERROR")
