@@ -4,7 +4,7 @@ from django.http  import JsonResponse
 from products.models import *
 
 class ProductListView(View):
-    def get(self, request, category_id):
+    def get(self, request):
         result = [{
                 'categoryId':category.id,
                 'categoryName':category.category_name,
