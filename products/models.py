@@ -6,7 +6,7 @@ from cores.timestamp import TimeStamp
 # Create your models here.
 class Product(TimeStamp):
     name        = models.CharField(max_length=45)
-    price       = models.CharField(max_length=45)
+    price       = models.DecimalField(decimal_places=2, max_digits=10)
     size        = models.CharField(max_length=45)
     description = models.TextField(max_length=1000)
     feeling     = models.CharField(max_length=45)
@@ -19,6 +19,8 @@ class Product(TimeStamp):
 
 class Category(models.Model):
     category_name = models.CharField(max_length=45)
+    main_description = models.CharField(max_length=1000, null=True)
+    sub_description = models.CharField(max_length=1000, null=True)
 
     class Meta:
         db_table = 'categories'
@@ -38,7 +40,7 @@ class ProductIngredient(models.Model):
         db_table = 'product_ingredients'
 
 class ProductImage(models.Model):
-    image_url = models.CharField(max_length=200)
+    image_url = models.CharField(max_length=2000)
     product   = models.ForeignKey('Product', on_delete=models.CASCADE)
 
     class Meta:
@@ -51,8 +53,8 @@ class SkinType(models.Model):
         db_table = 'skin_types'
 
 class ProductSkintype(models.Model):
-    product   = models.ForeignKey('Product', on_delete=models.CASCADE)
-    skin_type = models.ForeignKey('SkinType', on_delete=models.CASCADE)
+    product   = models.ForeignKey('Product', on_delete=models.CASCADE, related_name='skintypes')
+    skin_type = models.ForeignKey('SkinType', on_delete=models.CASCADE, related_name='products')
 
     class Meta:
         db_table = 'product_skintypes'
