@@ -12,8 +12,9 @@ class Product(TimeStamp):
     description = models.TextField(max_length=1000)
     feeling     = models.CharField(max_length=45)
     category    = models.ForeignKey('Category', on_delete=models.CASCADE)
-    howtouse    = models.JSONField(default={})
+    howtouse    = models.JSONField()
     badge       = models.CharField(max_length=15)
+    skin_type   = models.ManyToManyField('SkinType', through='ProductSkintype')
 
     
     class Meta:
@@ -28,7 +29,7 @@ class Category(models.Model):
         db_table = 'categories'
 
 class Ingredient(models.Model):
-    ingredients = models.CharField(max_length=300)
+    name = models.CharField(max_length=300)
 
     class Meta:
         db_table = 'ingredients'
@@ -36,21 +37,21 @@ class Ingredient(models.Model):
 class ProductIngredient(models.Model):
     product    = models.ForeignKey('Product', on_delete=models.CASCADE)
     ingredient = models.ForeignKey('Ingredient', on_delete=models.CASCADE)
-    squence    = models.IntegerField()
+    major       = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'product_ingredients'
 
 class ProductImage(models.Model):
-    image_url = models.CharField(max_length=2000)
+    url = models.CharField(max_length=2000)
     product   = models.ForeignKey('Product', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'product_imgaes'
     
 class SkinType(models.Model):
-    skin_type = models.CharField(max_length=45)
-
+    name = models.CharField(max_length=45)
+    
     class Meta:
         db_table = 'skin_types'
 
@@ -64,7 +65,7 @@ class ProductSkintype(models.Model):
 class ProductDescription(models.Model):
     list_description  = models.CharField(max_length=100)
     nomal_description = models.CharField(max_length=100)
-    nomal_title = models.CharField(max_length=100, null=True)
+    nomal_title       = models.CharField(max_length=100, null=True)
     category          = models.ForeignKey('Category', on_delete=models.CASCADE)
 
     class Meta:

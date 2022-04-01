@@ -1,9 +1,9 @@
 from django.urls import path
 
-from .views import ProductDetailView
+from .views import ProductDetailView , RecommendedView
 urlpatterns = [
-    path('/detail/<str:products_name>' , ProductDetailView.as_view()),
-    # path('/how/<str:products_name>' , HowToUseView.as_view()),
-    # path('/recommend/<str:products_name>' , RecommendedView.as_view())
+    path('/detail/<int:product_id>' , ProductDetailView.as_view()),
+    path('/recommend/<int:product_id>' , RecommendedView.as_view()),
+    
 ]
  
