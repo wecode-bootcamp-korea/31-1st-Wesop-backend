@@ -43,6 +43,9 @@ def sign_up(request):
             validate_email(email)
             validate_password(password)
 
+            if User.objects.filter(email = email).exists():
+                return JsonResponse({"message" : "ALREADY_EXIST_EMAIL"}, status=400)
+                
             User.objects.create(
                 email      = email,
                 password   = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
