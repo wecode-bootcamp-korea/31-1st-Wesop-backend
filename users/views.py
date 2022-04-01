@@ -22,7 +22,7 @@ def check_email(request):
         validate_email(email)
 
         IS_EXITS = User.objects.filter(email = email).exists()
-        return JsonResponse({'message' : IS_EXITS}, status = 200)
+        return JsonResponse({'message' : IS_EXITS}, status = 200) 
 
     except ValidationError:
             return JsonResponse({'message' : 'VALIDATION_ERROR'}, status = 400)
