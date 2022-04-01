@@ -24,6 +24,8 @@ def check_email(request):
         IS_EXITS = User.objects.filter(email = email).exists()
         return JsonResponse({'message' : IS_EXITS}, status = 200)
 
+    except ValidationError:
+            return JsonResponse({'message' : 'VALIDATION_ERROR'}, status = 400)
     except KeyError:
         return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
 
@@ -38,6 +40,7 @@ def sign_up(request):
             last_name  = data['last_name']
             first_name = data['first_name']
 
+            validate_email(email)
             validate_password(password)
 
             User.objects.create(
@@ -47,7 +50,10 @@ def sign_up(request):
                 first_name = first_name
             )
 
-            return JsonResponse({'message' : 'SUCCESS'}, status = 201)
+            user  = User.objects.get(email = email)
+            token = jwt.encode({"id" :user.id}, settings.SECRET_KEY, settings.ALGORITHM)
+
+            return JsonResponse({'message' : 'SUCCESS', 'token' : token}, status = 201)
 
         except ValidationError:
             return JsonResponse({'message' : 'VALIDATION_ERROR'}, status = 400)
