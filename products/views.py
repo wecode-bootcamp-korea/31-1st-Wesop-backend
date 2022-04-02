@@ -11,6 +11,7 @@ class ProductListView(View):
 
         if category_id == 0:
             products = Product.objects.all()[offset:limit]
+            
         else:
             products = Product.objects.filter(category=category_id)[offset:limit]
 
