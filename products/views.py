@@ -5,50 +5,27 @@ from products.models import *
 
 class ProductListView(View):
     def get(self, request):
+        category_id = int(request.GET.get('category_id', 0))
+        offset = int(request.GET.get('offset', 0))
+        limit = int(request.GET.get('limit', 0))
+
+        if category_id == 0:
+            products = Product.objects.all()
+
+        else:
+            products = Product.objects.filter(category=category_id)
+
         result = [{
-                'categoryId':category.id,
-                'categoryName':category.category_name,
-                'categoryDescription':category.main_description,
-                'products':[{
-                    'productId' : product.id,
-                    'badge':product.badge,
-                    'productName':product.name,
-                    'size':product.size,
-                    'price':product.price,
-                    'url':[img.image_url for img in product.productimage_set.all()]
-                } for product in Product.objects.filter(category=category.id)]
-        } for category in Category.objects.all()]
-        
+            'id': product.id,
+            'badge':product.badge,  
+            'productName':product.name,
+            'size':product.size,
+            'price':product.price,
+            'url':[img.image_url for img in product.productimage_set.all()],
+            'category' : {
+                'categoryId':product.category.id,
+                'categoryName':product.category.category_name,
+                'categoryDescription':product.category.main_description
+            }
+        } for product in products][offset:limit]
         return JsonResponse({'result':result}, status=200)
-
-
-class CategoryView(View):
-    def get(self, request, category_id):
-        category =  Category.objects.get(id=category_id)
-        categoryid = Category.objects.get(id=category_id).id
-
-        if categoryid:
-            result = []
-            res = []
-            products = Product.objects.filter(category = categoryid)
-            for product in products:
-                res.append(
-                {
-                    'productId' : product.id,
-                    'badge':product.badge,
-                    'productName':product.name,
-                    'size':product.size,
-                    'price':product.price,
-                    'url':[img.image_url for img in product.productimage_set.all()],
-                    'skin_type' : [productskintype.skin_type.skin_type for productskintype in product.skintypes.all()],
-                    'feeling' : product.feeling
-                })
-            # category = Category.objects.get(categoryid)
-            result.append({
-                'categoryId':categoryid,
-                'categoryName':category.category_name,
-                'categoryDescription':category.main_description,
-                'sub_category_description':category.sub_description,
-                'products':res
-            })
-            return JsonResponse({'result':result}, status=200)
