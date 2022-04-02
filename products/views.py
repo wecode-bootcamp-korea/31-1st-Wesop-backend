@@ -10,10 +10,10 @@ class ProductListView(View):
         limit = int(request.GET.get('limit', 0))
 
         if category_id == 0:
-            products = Product.objects.all()
+            products = Product.objects.all()[offset:limit]
 
         else:
-            products = Product.objects.filter(category=category_id)
+            products = Product.objects.filter(category=category_id)[offset:limit]
 
         result = [{
             'id': product.id,
@@ -27,5 +27,5 @@ class ProductListView(View):
                 'categoryName':product.category.category_name,
                 'categoryDescription':product.category.main_description
             }
-        } for product in products][offset:limit]
+        } for product in products]
         return JsonResponse({'result':result}, status=200)
