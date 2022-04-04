@@ -11,7 +11,6 @@ class Product(TimeStamp):
     size        = models.CharField(max_length=45)
     description = models.TextField(max_length=1000)
     category    = models.ForeignKey('Category', on_delete=models.CASCADE)
-    user        = models.ForeignKey(User, on_delete=models.CASCADE)
     howtouse    = models.JSONField()
     feelings    = models.ManyToManyField('Feeling', through="ProductFeelings")
     badge       = models.CharField(max_length=15, null=True)
