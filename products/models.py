@@ -15,7 +15,7 @@ class Product(TimeStamp):
     howtouse    = models.JSONField()
     feelings    = models.ManyToManyField('Feeling', through="ProductFeelings")
     badge       = models.CharField(max_length=15, null=True)
-    skin_type   = models.ManyToManyField('SkinType', through='ProductSkintype')
+    skin_types  = models.ManyToManyField('SkinType', through='ProductSkintype')
     
     class Meta:
         db_table = 'products'
