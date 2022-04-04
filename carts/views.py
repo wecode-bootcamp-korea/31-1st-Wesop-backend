@@ -1,4 +1,5 @@
 import json
+from re import I
 
 from django.http  import JsonResponse
 from django.views import View
@@ -82,16 +83,16 @@ class CartView(View):
     @logindeco
     def delete(self, request):
         try:
-            data       = json.loads(request.body)
+            product_id = request.GET.getlist('product_id')
             user       = request.user
-            product_id = data['product_id']
-            cart_check = Cart.objects.filter(user_id = user, product_id = product_id)
+            
+            for product in product_id:
+                if not Cart.objects.filter(user_id = user ,product_id = product).exists():
+                    return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIT'}, status = 400)
+                Cart.objects.filter(user_id = user ,product_id = product).delete()  
+            return JsonResponse({'message' : 'CART_DELETED'}, status = 200)
 
-            if not cart_check.exists():
-                return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIT'}, status = 400)
-            cart_check.delete()
-
-            return JsonResponse({'message' : 'PRODUCT_DELETED'}, status = 200)
-
-        except Product.DoesNotExist:
-            return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIT'}, status = 400)
+        except Cart.DoesNotExist:
+            return JsonResponse({'message' : 'CART_DOES_NOT_EXIT'}, status = 400)
+        except ValueError:
+            return JsonResponse({'message' : 'VALUE_ERROR'}, status = 400)
