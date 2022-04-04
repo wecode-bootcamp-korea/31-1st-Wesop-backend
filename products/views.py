@@ -9,13 +9,14 @@ class ProductDetailView(View):
             product = Product.objects.get(id = product_id)
             main_ingredients = Ingredient.objects.filter(productingredient__product_id = product.id, productingredient__major = True)
             skin_type        = SkinType.objects.filter(productskintype__product_id = product_id)
+            feelings         = Feeling.objects.filter(ProductFeelings__product_id = product_id)
             product_detail = {
                 'name'              : product.name,
                 'price'             : product.price,
                 'size'              : product.size,
                 'category'          : product.category.category_name,
                 'description'       : product.description,
-                'feeling'           : product.feeling,
+                'feeling'           : [feeling.name for feeling in feelings],
                 'product_imges'     : [image.url for image in product.productimage_set.all()],
                 'main_ingredients'  : [ingredient.name for ingredient in main_ingredients],
                 'ingredients'       : [ingredient.name for ingredient in Ingredient.objects.filter(productingredient__product = product_id)],
