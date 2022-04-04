@@ -27,16 +27,16 @@ class Feeling(models.Model):
         db_table = 'feelings'
 
 class ProductFeelings(models.Model):
-    product = models.ForeignKey('Product' , on_delete=models.CASCADE )
+    product = models.ForeignKey('Product' , on_delete=models.CASCADE)
     feeling = models.ForeignKey('Feeling' , on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'product_feelings'
 
 class Category(models.Model):
-    category_name = models.CharField(max_length=45)
+    category_name    = models.CharField(max_length=45)
     main_description = models.CharField(max_length=1000, null=True)
-    sub_description = models.CharField(max_length=1000, null=True)
+    sub_description  = models.CharField(max_length=1000, null=True)
     
     class Meta:
         db_table = 'categories'
@@ -56,7 +56,7 @@ class ProductIngredient(models.Model):
         db_table = 'product_ingredients'
 
 class ProductImage(models.Model):
-    url       = models.CharField(max_length=200)
+    url       = models.CharField(max_length=2000)
     product   = models.ForeignKey('Product', on_delete=models.CASCADE)
 
     class Meta:
