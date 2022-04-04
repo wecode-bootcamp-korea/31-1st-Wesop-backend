@@ -1,3 +1,4 @@
+from itertools import product
 from django.db import models
 
 from users.models import User
@@ -9,13 +10,25 @@ class Product(TimeStamp):
     price       = models.CharField(max_length=45)
     size        = models.CharField(max_length=45)
     description = models.TextField(max_length=1000)
-    feeling     = models.CharField(max_length=45)
     category    = models.ForeignKey('Category', on_delete=models.CASCADE)
     user        = models.ForeignKey(User, on_delete=models.CASCADE)
     howtouse    = models.JSONField()
     
     class Meta:
         db_table = 'products'
+
+class Feeling(models.Model):
+    name = models.CharField(max_length=30)
+    
+    class Meta:
+        db_table = 'feelings'
+
+class ProductFeelings(models.Model):
+    product = models.ForeignKey('Product' , on_delete=models.CASCADE )
+    feeling = models.ForeignKey('Feeling' , on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'product_feelings'
 
 class Category(models.Model):
     category_name = models.CharField(max_length=45)
