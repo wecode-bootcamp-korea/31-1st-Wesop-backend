@@ -13,6 +13,7 @@ class Product(TimeStamp):
     category    = models.ForeignKey('Category', on_delete=models.CASCADE)
     user        = models.ForeignKey(User, on_delete=models.CASCADE)
     howtouse    = models.JSONField()
+    feelings    = models.ManyToManyField('Feeling', through="ProductFeelings")
     
     class Meta:
         db_table = 'products'
