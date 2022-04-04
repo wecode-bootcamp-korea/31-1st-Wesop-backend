@@ -11,7 +11,7 @@ class RecommendedView(View):
                 'name'      : value.name,
                 'image'     : [image.url for image in value.productimage_set.all()],
                 'skintype'  : [types.skin_type.name for types in value.productskintype_set.all()]
-                } for value in Product.objects.filter(category = category_id) if value.id != Product.objects.get(id = product_id).id]
+                } for value in Product.objects.filter(category = category_id).exclude(id=product_id)]
             
             return JsonResponse({'result' : [ recommend_list ] }, status = 200)
         except KeyError:
