@@ -1,3 +1,4 @@
+from itertools import product
 from django.db import models
 
 from users.models import User
@@ -12,7 +13,7 @@ class Product(TimeStamp):
     howtouse    = models.JSONField()
     badge       = models.CharField(max_length=15, null=True)
     skin_type   = models.ManyToManyField('SkinType', through='ProductSkintype')
-
+    feelings    = models.ManyToManyField('Feeling', through="ProductFeelings")
     
     class Meta:
         db_table = 'products'
