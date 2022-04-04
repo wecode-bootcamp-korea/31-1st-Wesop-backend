@@ -2,7 +2,6 @@ from django.db import models
 
 from cores.timestamp import TimeStamp
 
-# Create your models here.
 class User(TimeStamp):
     first_name = models.CharField(max_length=40, null=False)
     last_name  = models.CharField(max_length=40, null=False)
