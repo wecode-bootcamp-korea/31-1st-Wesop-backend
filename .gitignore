@@ -1,6 +1,10 @@
 my_settings.py
 .idea
 
+*.csv
+db_uploader.py
+
+
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,vim,macos,linux,zsh,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,vim,macos,linux,zsh,visualstudiocode
 

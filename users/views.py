@@ -1,5 +1,4 @@
 import json
-
 import bcrypt
 import jwt
 

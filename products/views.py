@@ -1,6 +1,7 @@
-
 from django.http  import JsonResponse
 from django.views import View
+from django.http  import JsonResponse
+from django.db.models import Q
 
 from products.models import Product, Ingredient, SkinType, ProductFeelings
 
@@ -21,6 +22,56 @@ class RecommendedView(View):
             return JsonResponse({'message' : 'KEY_ERROR'} , status = 401)
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_DOES_EXIST'} , status = 401)
+
+class ProductListView(View):
+    def get(self, request):
+        category_id   = request.GET.get('category_id', None)
+        offset        = int(request.GET.get('offset', 0))
+        limit         = int(request.GET.get('limit', 100))
+        ingredient_id = request.GET.getlist('ingredient_id', None)
+        skintype_id   = request.GET.getlist('skintype_id', None)
+        scent         = request.GET.get('scent', None)
+        feeling_id    = request.GET.get('feeling_id', None)
+        
+        q = Q()
+
+        if category_id:
+            q &= Q(category__id=category_id)
+
+        if scent:
+            q &= Q(howtouse__scent__contains=scent)
+        
+        if ingredient_id:
+            q &= Q(productingredient__ingredient__id__in=ingredient_id)
+        
+        if skintype_id:
+            q &= Q(skintypes__skin_type__id__in=skintype_id)
+        
+        if feeling_id:
+            q &= Q(productfeelings__feeling__id__in=feeling_id)
+        
+
+        products = Product.objects.filter(q)[offset:limit]
+
+        result = [{
+            'id'         : product.id,
+            'badge'      : product.badge,
+            'productName': product.name,
+            'size'       : product.size,
+            'price'      : product.price,
+            'feeling'    : [feeling.feeling.name for feeling in product.productfeelings_set.all()],
+            'ingredient' : [item.ingredient.name for item in product.productingredient_set.all()],
+            'skin_type'  : [productskintype.skin_type.name for productskintype in product.productskintype_set.all()],
+            'url'        : [img.url for img in product.productimage_set.all()],
+            'howtouse'   : product.howtouse,
+            'category'   : {
+                'categoryId'            : product.category.id,
+                'categoryName'          : product.category.category_name,
+                'categoryDescription'   : product.category.main_description,
+                'categorySubDescription': product.category.sub_description
+            }
+        } for product in products]
+        return JsonResponse({'result':result}, status=200)
 
 class ProductDetailView(View):
     def get(self, request, product_id):
