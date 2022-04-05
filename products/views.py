@@ -9,6 +9,7 @@ class RecommendedView(View):
         try:
             category_id   = Product.objects.get(id = product_id).category
             products      = Product.objects.filter(category = category_id).exclude(id=product_id)
+            
             recommend_list = [{
                 'name'      : product.name,
                 'image'     : [image.url for image in product.productimage_set.all()],
