@@ -15,18 +15,18 @@ from .models import User
 def check_email(request):
     try:
         if not request.method == 'POST':
-            return JsonResponse({"message" : "INVALID_METHOD"}, status=405) 
+            return JsonResponse({'message' : 'INVALID_METHOD'}, status=405)
 
         data  = json.loads(request.body)
         email = data['email']
 
         validate_email(email)
 
-        is_exit = User.objects.filter(email = email).exists()
-        return JsonResponse({'message' : is_exit}, status = 200)
+        is_exit = User.objects.filter(email=email).exists()
+        return JsonResponse({'message' : is_exit}, status=200)
 
     except ValidationError:
-            return JsonResponse({'message' : 'VALIDATION_ERROR'}, status = 400)
+        return JsonResponse({'message' : 'VALIDATION_ERROR'}, status=400)
     except KeyError:
         return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
 
@@ -59,11 +59,11 @@ def sign_up(request):
             return JsonResponse({
                 'message': 'SUCCESS',
                 'token': token,
-                "first_Name": user.first_name,
-                "last_Name": user.last_name,
-                "email": user.email,
-                "user_id": user.id
-                }, status=201)
+                'first_Name': user.first_name,
+                'last_Name': user.last_name,
+                'email': user.email,
+                'user_id': user.id
+            }, status=201)
 
         except ValidationError:
             return JsonResponse({'message' : 'VALIDATION_ERROR'}, status = 400)
@@ -73,7 +73,7 @@ def sign_up(request):
 def log_in(request):
     try:
         if not request.method == 'POST':
-            return JsonResponse({"message" : "INVALID_METHOD"}, status=405) 
+            return JsonResponse({'message' : 'INVALID_METHOD'}, status=405)
             
         data     = json.loads(request.body)
         email    = data['email']
@@ -84,7 +84,7 @@ def log_in(request):
         validate_password(password)
 
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-            return JsonResponse({"message" : "INVALID_PASSWORD"}, status=401)
+            return JsonResponse({'message' : 'INVALID_PASSWORD'}, status=401)
 
         token = jwt.encode({"id": user.id, 'exp': datetime.utcnow() + timedelta(days=1)}, settings.SECRET_KEY,settings.ALGORITHM)
         return JsonResponse({
@@ -97,8 +97,8 @@ def log_in(request):
             }, status=200)
 
     except User.DoesNotExist:
-        return JsonResponse({"message" : "USER_DOES_NOT_EXIST"}, status=404)
+        return JsonResponse({'message' : 'USER_DOES_NOT_EXIST'}, status=404)
     except ValidationError:
-        return JsonResponse({'message' : 'VALIDATION_ERROR'}, status = 400)
+        return JsonResponse({'message' : 'VALIDATION_ERROR'}, status=400)
     except KeyError:
-        return JsonResponse({"message" : "KEY_ERROR"}, status=400)
+        return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
