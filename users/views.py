@@ -1,14 +1,15 @@
 import json
 
+import bcrypt
+import jwt
 
 from django.conf import settings
 from django.http import JsonResponse
 from django.forms import ValidationError
-import bcrypt
-import jwt
 
+from datetime import datetime, timedelta
 from cores.validations import validate_email, validate_password
-from .models import *
+from .models import User
 
 
 def check_email(request):
@@ -53,10 +54,17 @@ def sign_up(request):
                 first_name = first_name
             )
 
-            user  = User.objects.get(email = email)
-            token = jwt.encode({"id" :user.id}, settings.SECRET_KEY, settings.ALGORITHM)
-
-            return JsonResponse({'message' : 'SUCCESS', 'token' : token}, status = 201)
+            user  = User.objects.get(email=email)
+            token = jwt.encode({"id": user.id, 'exp': datetime.utcnow() + timedelta(days=1)}, settings.SECRET_KEY, settings.ALGORITHM)
+            user_first_name = User.objects.get(email=email).first_name
+            user_last_name  = User.objects.get(email=email).last_name
+            return JsonResponse({'message': 'SUCCESS',
+                                 'token': token,
+                                 "firstName": user_first_name,
+                                 "lastName": user_last_name,
+                                 "email": user.email,
+                                 "userId": user.id
+                                 }, status=201)
 
         except ValidationError:
             return JsonResponse({'message' : 'VALIDATION_ERROR'}, status = 400)
@@ -68,20 +76,28 @@ def log_in(request):
         if not request.method == 'POST':
             return JsonResponse({"message" : "INVALID_METHOD"}, status=405) 
             
-        data     = json.loads(request.body)
-        email    = data['email']
-        password = data['password']
+        data            = json.loads(request.body)
+        email           = data['email']
+        password        = data['password']
+        user            = User.objects.get(email=email)
+        token           = jwt.encode({"id": user.id, 'exp': datetime.utcnow() + timedelta(days=1)}, settings.SECRET_KEY, settings.ALGORITHM)
+        user_first_name = User.objects.get(email=email).first_name
+        user_last_name  = User.objects.get(email=email).last_name
 
         validate_email(email)
         validate_password(password)
 
-        user  = User.objects.get(email = email)
-        token = jwt.encode({"id" :user.id}, settings.SECRET_KEY, settings.ALGORITHM)
-
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-                return JsonResponse({"message" : "INVALID_PASSWORD"}, status=401)
+            return JsonResponse({"message" : "INVALID_PASSWORD"}, status=401)
 
-        return JsonResponse({"message" : "SUCCESS","token" : token}, status=200)
+        return JsonResponse({
+            "message": "SUCCESS",
+            "token": token,
+            "firstName": user_first_name,
+            "lastName": user_last_name,
+            "email": user.email,
+            "userId": user.id
+        }, status=200)
 
     except User.DoesNotExist:
         return JsonResponse({"message" : "USER_DOES_NOT_EXIST"}, status=404)
