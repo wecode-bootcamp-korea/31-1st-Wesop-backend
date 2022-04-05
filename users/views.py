@@ -1,9 +1,9 @@
 import json
 
-
 from django.conf import settings
 from django.http import JsonResponse
 from django.forms import ValidationError
+
 import bcrypt
 import jwt
 

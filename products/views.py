@@ -6,31 +6,32 @@ from products.models import *
 
 class ProductListView(View):
     def get(self, request):
-        category_id = request.GET.get('category_id', None)
-        offset      = int(request.GET.get('offset', 0))
-        limit       = int(request.GET.get('limit', 100))
-        ingredient  = request.GET.getlist('ingredient', None)
-        skintype   = request.GET.getlist('skintype', None)
-        badge       = request.GET.getlist('badge', None)
-        feeling     = request.GET.get('feeling', None)
+        category_id   = request.GET.get('category_id', None)
+        offset        = int(request.GET.get('offset', 0))
+        limit         = int(request.GET.get('limit', 100))
+        ingredient_id = request.GET.getlist('ingredient_id', None)
+        skintype_id   = request.GET.getlist('skintype_id', None)
+        scent         = request.GET.get('scent', None)
+        feeling_id    = request.GET.get('feeling_id', None)
         
         q = Q()
 
         if category_id:
             q &= Q(category__id=category_id)
 
-        if badge:
-            q &= Q(badge__in=badge)
+        if scent:
+            q &= Q(howtouse__scent__contains=scent)
         
-        if ingredient:
-            q &= Q(productingredient__ingredient__id__in=ingredient)
+        if ingredient_id:
+            q &= Q(productingredient__ingredient__id__in=ingredient_id)
         
-        if skintype:
-            q &= Q(skintypes__skin_type__id__in=skintype)
+        if skintype_id:
+            q &= Q(skintypes__skin_type__id__in=skintype_id)
         
-        if feeling:
-            q &= Q(productfeelings__feeling__id__in=feeling)
+        if feeling_id:
+            q &= Q(productfeelings__feeling__id__in=feeling_id)
         
+
         products = Product.objects.filter(q)[offset:limit]
 
         result = [{
@@ -43,10 +44,11 @@ class ProductListView(View):
             'ingredient' : [item.ingredient.name for item in product.productingredient_set.all()],
             'skin_type'  : [productskintype.skin_type.name for productskintype in product.productskintype_set.all()],
             'url'        : [img.url for img in product.productimage_set.all()],
+            'howtouse'   : product.howtouse,
             'category'   : {
-                'categoryId'         : product.category.id,
-                'categoryName'       : product.category.category_name,
-                'categoryDescription': product.category.main_description,
+                'categoryId'            : product.category.id,
+                'categoryName'          : product.category.category_name,
+                'categoryDescription'   : product.category.main_description,
                 'categorySubDescription': product.category.sub_description
             }
         } for product in products]
