@@ -10,7 +10,6 @@ class ProductDetailView(View):
             main_ingredients = Ingredient.objects.filter(productingredient__product_id = product.id, productingredient__major = True)
             skin_type        = SkinType.objects.filter(productskintype__product_id = product_id)
             feelings         = ProductFeelings.objects.filter(product = product_id)
-            print(feelings)
             product_detail = {
                 'name'              : product.name,
                 'price'             : product.price,
