@@ -22,8 +22,8 @@ def check_email(request):
 
         validate_email(email)
 
-        IS_EXITS = User.objects.filter(email = email).exists()
-        return JsonResponse({'message' : IS_EXITS}, status = 200) 
+        is_exit = User.objects.filter(email = email).exists()
+        return JsonResponse({'message' : is_exit}, status = 200)
 
     except ValidationError:
             return JsonResponse({'message' : 'VALIDATION_ERROR'}, status = 400)
@@ -46,25 +46,24 @@ def sign_up(request):
 
             if User.objects.filter(email = email).exists():
                 return JsonResponse({"message" : "ALREADY_EXIST_EMAIL"}, status=400)
-                
-            User.objects.create(
+
+            user = User.objects.create(
                 email      = email,
                 password   = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
                 last_name  = last_name,
                 first_name = first_name
             )
 
-            user  = User.objects.get(email=email)
             token = jwt.encode({"id": user.id, 'exp': datetime.utcnow() + timedelta(days=1)}, settings.SECRET_KEY, settings.ALGORITHM)
-            user_first_name = User.objects.get(email=email).first_name
-            user_last_name  = User.objects.get(email=email).last_name
-            return JsonResponse({'message': 'SUCCESS',
-                                 'token': token,
-                                 "firstName": user_first_name,
-                                 "lastName": user_last_name,
-                                 "email": user.email,
-                                 "userId": user.id
-                                 }, status=201)
+
+            return JsonResponse({
+                'message': 'SUCCESS',
+                'token': token,
+                "first_Name": user.first_name,
+                "last_Name": user.last_name,
+                "email": user.email,
+                "user_id": user.id
+                }, status=201)
 
         except ValidationError:
             return JsonResponse({'message' : 'VALIDATION_ERROR'}, status = 400)
@@ -76,13 +75,10 @@ def log_in(request):
         if not request.method == 'POST':
             return JsonResponse({"message" : "INVALID_METHOD"}, status=405) 
             
-        data            = json.loads(request.body)
-        email           = data['email']
-        password        = data['password']
-        user            = User.objects.get(email=email)
-        token           = jwt.encode({"id": user.id, 'exp': datetime.utcnow() + timedelta(days=1)}, settings.SECRET_KEY, settings.ALGORITHM)
-        user_first_name = User.objects.get(email=email).first_name
-        user_last_name  = User.objects.get(email=email).last_name
+        data     = json.loads(request.body)
+        email    = data['email']
+        password = data['password']
+        user     = User.objects.get(email=email)
 
         validate_email(email)
         validate_password(password)
@@ -90,14 +86,15 @@ def log_in(request):
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             return JsonResponse({"message" : "INVALID_PASSWORD"}, status=401)
 
+        token = jwt.encode({"id": user.id, 'exp': datetime.utcnow() + timedelta(days=1)}, settings.SECRET_KEY,settings.ALGORITHM)
         return JsonResponse({
             "message": "SUCCESS",
             "token": token,
-            "firstName": user_first_name,
-            "lastName": user_last_name,
+            "first_Name": user.first_name,
+            "last_Name": user.last_name,
             "email": user.email,
-            "userId": user.id
-        }, status=200)
+            "user_id": user.id
+            }, status=200)
 
     except User.DoesNotExist:
         return JsonResponse({"message" : "USER_DOES_NOT_EXIST"}, status=404)
