@@ -91,7 +91,7 @@ class ProductListView(View):
         offset        = int(request.GET.get('offset', 0))
         limit         = int(request.GET.get('limit', 100))
         ingredient_id = request.GET.getlist('ingredient_id', None)
-        skintype_id   = request.GET.getlist('skintype_id', None)
+        skin_type_id   = request.GET.getlist('skin_type_id', None)
         scent         = request.GET.get('scent', None)
         feeling_id    = request.GET.get('feeling_id', None)
         
@@ -106,8 +106,8 @@ class ProductListView(View):
         if ingredient_id:
             q &= Q(productingredient__ingredient__id__in=ingredient_id)
         
-        if skintype_id:
-            q &= Q(skintypes__skin_type__id__in=skintype_id)
+        if skin_type_id:
+            q &= Q(skintypes__skin_type__id__in=skin_type_id)
         
         if feeling_id:
             q &= Q(productfeelings__feeling__id__in=feeling_id)
