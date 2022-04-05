@@ -46,7 +46,8 @@ class ProductListView(View):
             'category'   : {
                 'categoryId'         : product.category.id,
                 'categoryName'       : product.category.category_name,
-                'categoryDescription': product.category.main_description
+                'categoryDescription': product.category.main_description,
+                'categorySubDescription': product.category.sub_description
             }
         } for product in products]
         return JsonResponse({'result':result}, status=200)
