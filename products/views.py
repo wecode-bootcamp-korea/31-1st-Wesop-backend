@@ -1,14 +1,8 @@
-<<<<<<< HEAD
 import json
 
 from django.http     import JsonResponse
 from django.views    import View
-=======
-from django.http  import JsonResponse
-from django.views import View
-from django.http  import JsonResponse
 from django.db.models import Q
->>>>>>> main
 
 
 from users.models    import User
@@ -90,9 +84,7 @@ class RecommendedView(View):
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_DOES_EXIST'} , status = 401)
 
-<<<<<<< HEAD
  
-=======
 class ProductListView(View):
     def get(self, request):
         category_id   = request.GET.get('category_id', None)
@@ -143,7 +135,6 @@ class ProductListView(View):
         } for product in products]
         return JsonResponse({'result':result}, status=200)
 
->>>>>>> main
 class ProductDetailView(View):
     def get(self, request, product_id):
         try: 
