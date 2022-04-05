@@ -4,7 +4,6 @@ from django.db import models
 from users.models import User
 from cores.timestamp import TimeStamp
 
-# Create your models here.
 class Product(TimeStamp):
     name        = models.CharField(max_length=45)
     price       = models.DecimalField(decimal_places=2, max_digits=10)
