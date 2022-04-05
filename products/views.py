@@ -3,7 +3,7 @@ from django.views import View
 from django.http  import JsonResponse
 from django.db.models import Q
 
-from products.models import Product, Ingredient, SkinType, ProductFeelings
+from products.models import Category, Product, Ingredient, SkinType, ProductFeelings
 
 class RecommendedView(View):
     def get(self, request, product_id):
@@ -99,3 +99,23 @@ class ProductDetailView(View):
             return JsonResponse({'message' : 'KEY_ERROR'} , status = 404)
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_NAME_ERROR'} , status = 404)
+
+class CategoryListView(View):
+    def get(self, request):
+        category_id   = request.GET.get('category_id', None)
+        offset        = int(request.GET.get('offset', 0))
+        limit         = int(request.GET.get('limit', 100))
+
+        if category_id == None:
+            categories = Category.objects.all()[offset:limit]
+        else:
+            categories = Category.objects.filter(id=category_id)[offset:limit]
+        
+        result = [{
+            'categoryId'            : category.id,
+            'categoryName'          : category.category_name,
+            'categoryDescription'   : category.main_description,
+            'categorySubDescription': category.sub_description
+        } for category in categories]
+
+        return JsonResponse({'result':result}, status=200)
