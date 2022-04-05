@@ -28,35 +28,38 @@ def check_email(request):
     except ValidationError:
         return JsonResponse({'message' : 'VALIDATION_ERROR'}, status=400)
     except KeyError:
-        return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
+        return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
+
 
 def sign_up(request):
-        try:
-            if not request.method == 'POST':
-                return JsonResponse({"message" : "INVALID_METHOD"}, status=405) 
+    try:
+        if not request.method == 'POST':
+            return JsonResponse({'message' : 'INVALID_METHOD'}, status=405)
 
-            data       = json.loads(request.body)
-            email      = data['email']
-            password   = data['password']
-            last_name  = data['last_name']
-            first_name = data['first_name']
+        data       = json.loads(request.body)
+        email      = data['email']
+        password   = data['password']
+        last_name  = data['last_name']
+        first_name = data['first_name']
 
-            validate_email(email)
-            validate_password(password)
+        validate_email(email)
+        validate_password(password)
 
-            if User.objects.filter(email = email).exists():
-                return JsonResponse({"message" : "ALREADY_EXIST_EMAIL"}, status=400)
+        if User.objects.filter(email = email).exists():
+            return JsonResponse({'message' : 'ALREADY_EXIST_EMAIL'}, status=400)
 
-            user = User.objects.create(
-                email      = email,
-                password   = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
-                last_name  = last_name,
-                first_name = first_name
-            )
+        user = User.objects.create(
+            email      = email,
+            password   = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8'),
+            last_name  = last_name,
+            first_name = first_name
+        )
 
-            token = jwt.encode({"id": user.id, 'exp': datetime.utcnow() + timedelta(days=1)}, settings.SECRET_KEY, settings.ALGORITHM)
+        token = jwt.encode({'id': user.id, 'exp': datetime.utcnow() + timedelta(days=1)},
+                           settings.SECRET_KEY,
+                           settings.ALGORITHM)
 
-            return JsonResponse({
+        return JsonResponse({
                 'message': 'SUCCESS',
                 'token': token,
                 'first_Name': user.first_name,
@@ -65,10 +68,11 @@ def sign_up(request):
                 'user_id': user.id
             }, status=201)
 
-        except ValidationError:
-            return JsonResponse({'message' : 'VALIDATION_ERROR'}, status = 400)
-        except KeyError:
-            return JsonResponse({'message' : 'KEY_ERROR'}, status = 400)
+    except ValidationError:
+        return JsonResponse({'message' : 'VALIDATION_ERROR'}, status=400)
+    except KeyError:
+        return JsonResponse({'message' : 'KEY_ERROR'}, status=400)
+
 
 def log_in(request):
     try:
@@ -86,14 +90,17 @@ def log_in(request):
         if not bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             return JsonResponse({'message' : 'INVALID_PASSWORD'}, status=401)
 
-        token = jwt.encode({"id": user.id, 'exp': datetime.utcnow() + timedelta(days=1)}, settings.SECRET_KEY,settings.ALGORITHM)
+        token = jwt.encode({'id': user.id, 'exp': datetime.utcnow() + timedelta(days=1)},
+                           settings.SECRET_KEY,
+                           settings.ALGORITHM)
+
         return JsonResponse({
-            "message": "SUCCESS",
-            "token": token,
-            "first_Name": user.first_name,
-            "last_Name": user.last_name,
-            "email": user.email,
-            "user_id": user.id
+                'message': 'SUCCESS',
+                'token': token,
+                'first_Name': user.first_name,
+                'last_Name': user.last_name,
+                'email': user.email,
+                'user_id': user.id
             }, status=200)
 
     except User.DoesNotExist:
