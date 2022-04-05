@@ -8,7 +8,7 @@ class ProductListView(View):
     def get(self, request):
         category_id = request.GET.get('category_id', None)
         offset      = int(request.GET.get('offset', 0))
-        limit       = int(request.GET.get('limit', 0))
+        limit       = int(request.GET.get('limit', 100))
         ingredient  = request.GET.getlist('ingredient', None)
         skintype   = request.GET.getlist('skintype', None)
         badge       = request.GET.getlist('badge', None)
@@ -29,7 +29,7 @@ class ProductListView(View):
             q &= Q(skintypes__skin_type__id__in=skintype)
         
         if feeling:
-            q &= Q(productfeelings=feeling)
+            q &= Q(productfeelings__feeling__id__in=feeling)
         
         products = Product.objects.filter(q)[offset:limit]
 
@@ -39,10 +39,10 @@ class ProductListView(View):
             'productName': product.name,
             'size'       : product.size,
             'price'      : product.price,
-            'feeling'    : product.feeling,
-            'ingredient' : [item.ingredient.ingredients for item in product.productingredient_set.all()],
-            'skin_type'  : [productskintype.skin_type.skin_type for productskintype in product.skintypes.all()],
-            'url'        : [img.image_url for img in product.productimage_set.all()],
+            'feeling'    : [feeling.feeling.name for feeling in product.productfeelings_set.all()],
+            'ingredient' : [item.ingredient.name for item in product.productingredient_set.all()],
+            'skin_type'  : [productskintype.skin_type.name for productskintype in product.productskintype_set.all()],
+            'url'        : [img.url for img in product.productimage_set.all()],
             'category'   : {
                 'categoryId'         : product.category.id,
                 'categoryName'       : product.category.category_name,
