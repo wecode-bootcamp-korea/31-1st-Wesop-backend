@@ -64,7 +64,7 @@ class ProductReview(View):
         except Review.DoesNotExist:
             return JsonResponse({'message' : 'REVIEW_DOES_NOT_EXIST'} , status = 400)
         
-
+        
 class RecommendedView(View):
     def get(self, request, product_id):
         try:
@@ -83,6 +83,7 @@ class RecommendedView(View):
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_DOES_EXIST'} , status = 401)
 
+ 
 class ProductDetailView(View):
     def get(self, request, product_id):
         try: 
