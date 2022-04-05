@@ -1,7 +1,7 @@
 my_settings.py
 
 *.csv
-uploader.py
+db_uploader.py
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,vim,macos,linux,zsh,visualstudiocode
