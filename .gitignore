@@ -1,6 +1,8 @@
 my_settings.py
 
-cores/csv
+*.csv
+uploader.py
+
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,pycharm,vim,macos,linux,zsh,visualstudiocode
 # Edit at https://www.toptal.com/developers/gitignore?templates=python,pycharm,vim,macos,linux,zsh,visualstudiocode
