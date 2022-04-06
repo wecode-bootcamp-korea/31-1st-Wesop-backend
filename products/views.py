@@ -9,7 +9,7 @@ from users.models     import User
 from products.models  import Product, Ingredient, SkinType, ProductFeelings, Review
 
 
-class ProductReview(View):
+class ProductReviewView(View):
     @author
     def post(self, request):
         try:
