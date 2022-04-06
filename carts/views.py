@@ -20,6 +20,7 @@ class CartView(View):
 
             if not Product.objects.filter(id=product_id).exists():
                 return JsonResponse({'message': 'PRODUCT_DOES_NOT_EXIT'}, status=404)
+
             if carts.exists():
                 for cart in carts:
                     if cart.quantity <= 0 or cart.quantity >= 20:
@@ -55,17 +56,17 @@ class CartView(View):
             'productSize': cart.product.size,
             'totalPrice' : int(cart.quantity * cart.product.price)
             }for cart in carts]
-
         return JsonResponse({'message': result}, status=200)
 
     @author
     def delete(self, request):
         try:
             cart_id = request.GET.getlist('cart_id')
-            user       = request.user
+            user    = request.user
 
-            if cart_id == []:
+            if cart_id==[]:
                 return JsonResponse({'message': 'LIST_EMPTY'}, status=400)
+
             for cart in cart_id:
                 if not Cart.objects.filter(id=cart).exists():
                     return JsonResponse({'message': 'CART_DOES_NOT_EXIT'}, status=404)
