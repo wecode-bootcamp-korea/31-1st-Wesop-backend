@@ -173,11 +173,12 @@ class ProductReviewView(View):
             return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 404)
-
-    def delete(self, request):
+    
+    @author
+    def delete(self, request, review_id):
         try:
-            data = json.loads(request.body)
-            review      = Review.objects.get(id=data['review_id'])
+            data        = json.loads(request.body)
+            review      = Review.objects.get(id = review_id)
                 
             if not Review.objects.filter(user = request.user , product_id = data['product_id']).exists():
                 return JsonResponse({'message' : 'UNAUTHORIZED_REQUEST'} , status = 404)

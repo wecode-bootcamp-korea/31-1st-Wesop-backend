@@ -7,5 +7,6 @@ urlpatterns = [
     path('/categories/<int:category_id>', CategoryDetailView.as_view()),
     path('/recommend/<int:product_id>' , RecommendedView.as_view()),
     path('/<int:product_id>' , ProductDetailView.as_view()),
-    path('/review' , ProductReviewView.as_view())
+    path('/review' , ProductReviewView.as_view()),
+    path('/review/<int:review_id>' , ProductReviewView.as_view())
 ]
