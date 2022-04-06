@@ -1,4 +1,5 @@
 import json
+from unittest import result
 
 from cores.utils      import author
 from django.http      import JsonResponse
@@ -135,24 +136,25 @@ class CategoryDetailView(View):
         return JsonResponse({'result':result}, status=200)
     
 class ProductReviewView(View):
-<<<<<<< HEAD
     def get(self, request):
         try:
-            product_reviews =Review.objects.filter(product_id = request.GET.get('product_id'))
-            if not product_reviews.exists():
+            data = json.loads(request.body)
+            reviews =Review.objects.filter(product_id = data['product_id'])
+            
+            if not reviews.exists():
                 return JsonResponse({'message' : 'PRODUCT_REVIEW_DOES_NOT_EXIST'} , status = 404)
-            if product_reviews.exists():
-                product_review_list = [{
+            
+            result = [{
                     'review_id' : review.id,
                     'user'      : review.user.email,
                     'content'   : review.content
-                } for review in product_reviews]
-            return JsonResponse({'message' : product_review_list} , status =200)
+                } for review in reviews]
+            return JsonResponse({'message' : result} , status =200)
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 400)
-=======
+    
     @author
     def post(self, request):
         try:
@@ -172,4 +174,3 @@ class ProductReviewView(View):
             return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 404)
->>>>>>> main
