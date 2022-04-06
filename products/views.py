@@ -1,6 +1,9 @@
-from django.http  import JsonResponse
-from django.views import View
-from django.http  import JsonResponse
+import json
+
+from cores.utils      import author
+from django.http      import JsonResponse
+from django.views     import View
+from django.http      import JsonResponse
 from django.db.models import Q
 
 from products.models import Category, Product, Ingredient, SkinType, ProductFeelings, Review
@@ -132,6 +135,7 @@ class CategoryDetailView(View):
         return JsonResponse({'result':result}, status=200)
     
 class ProductReviewView(View):
+<<<<<<< HEAD
     def get(self, request):
         try:
             product_reviews =Review.objects.filter(product_id = request.GET.get('product_id'))
@@ -148,3 +152,24 @@ class ProductReviewView(View):
             return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 400)
+=======
+    @author
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            content     = data['content']
+            user        = request.user
+            product     = Product.objects.get(id = data['product_id'])
+            
+            Review.objects.create(  
+                user    = user,
+                product = product, 
+                content = content
+            )
+             
+            return JsonResponse({'message' : 'SUCCESS'} , status = 201) 
+        except KeyError:
+            return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
+        except Product.DoesNotExist:
+            return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 404)
+>>>>>>> main
