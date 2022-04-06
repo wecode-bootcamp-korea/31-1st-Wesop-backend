@@ -23,7 +23,7 @@ class CartView(View):
                 cart.quantity += 1
                 cart.save()
             else:
-                return JsonResponse({'message': 'QUANTITY_CHANGED'}, status=200)
+                return JsonResponse({'message': 'INVALID_QUANTITY'}, status=200)
 
             return JsonResponse({'message': 'CART_CREATED'}, status=201)
 
