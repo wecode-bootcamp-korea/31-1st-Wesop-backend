@@ -36,7 +36,7 @@ class CartView(View):
         user = request.user
         carts = Cart.objects.filter(user=user)
 
-        if not Cart.objects.filter(user=user).exists():
+        if not carts.exists():
             return JsonResponse({'message': 'INVALID_USER'}, status=400)
 
         result = [{
