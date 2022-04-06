@@ -4,7 +4,6 @@ from django.http     import JsonResponse
 from django.views    import View
 from django.db.models import Q
 
-
 from users.models    import User
 from products.models import Product, Ingredient, SkinType, ProductFeelings, Review
 
@@ -62,8 +61,6 @@ class ProductReview(View):
             return JsonResponse({'message' : 'SUCCESS'} , status = 200)
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
-
-        
         
 class RecommendedView(View):
     def get(self, request, product_id):
