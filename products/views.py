@@ -87,6 +87,7 @@ class ProductDetailView(View):
             skin_type        = SkinType.objects.filter(productskintype__product_id = product_id)
             feelings         = ProductFeelings.objects.filter(product = product_id)
             product_detail = {
+                'id'                : product.id,
                 'name'              : product.name,
                 'price'             : product.price,
                 'size'              : product.size,
