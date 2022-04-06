@@ -87,13 +87,13 @@ class RecommendedView(View):
  
 class ProductListView(View):
     def get(self, request):
-        category_id   = request.GET.get('category_id', None)
-        offset        = int(request.GET.get('offset', 0))
-        limit         = int(request.GET.get('limit', 100))
-        ingredient_id = request.GET.getlist('ingredient_id', None)
+        category_id    = request.GET.get('category_id', None)
+        offset         = int(request.GET.get('offset', 0))
+        limit          = int(request.GET.get('limit', 100))
+        ingredient_id  = request.GET.getlist('ingredient_id', None)
         skin_type_id   = request.GET.getlist('skin_type_id', None)
-        scent         = request.GET.get('scent', None)
-        feeling_id    = request.GET.get('feeling_id', None)
+        scent          = request.GET.get('scent', None)
+        feeling_id     = request.GET.get('feeling_id', None)
         
         q = Q()
 
