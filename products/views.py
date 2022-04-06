@@ -176,18 +176,13 @@ class ProductReviewView(View):
     
     @author
     def delete(self, request, review_id):
-        try:
-            data        = json.loads(request.body)
-            review      = Review.objects.get(id = review_id)
-                
-            if not Review.objects.filter(user = request.user , product_id = data['product_id']).exists():
-                return JsonResponse({'message' : 'UNAUTHORIZED_REQUEST'} , status = 404)
+        review      = Review.objects.filter(user = request.user , id = review_id)
             
-            review.delete()
-                
-            return JsonResponse({'message' : 'SUCCESS'} , status = 200)
-        except KeyError:
-            return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
-        except Review.DoesNotExist:
-            return JsonResponse({'message' : 'REVIEW_DOES_NOT_EXIST'})
+        if not review.exists():
+            return JsonResponse({'message' : 'UNAUTHORIZED_REQUEST'} , status = 404)
+        
+        review.delete()
+            
+        return JsonResponse({'message' : 'SUCCESS'} , status = 200)
+
    
