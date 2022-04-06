@@ -1,9 +1,16 @@
 import json
 
+<<<<<<< HEAD
 from cores.utils  import author
 from django.http  import JsonResponse
 from django.views import View
 from django.http  import JsonResponse
+=======
+from cores.utils      import author
+from django.http      import JsonResponse
+from django.views     import View
+from django.http      import JsonResponse
+>>>>>>> main
 from django.db.models import Q
 
 from products.models import Category, Product, Ingredient, SkinType, ProductFeelings, Review
@@ -136,6 +143,25 @@ class CategoryDetailView(View):
     
 class ProductReviewView(View):
     @author
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            content     = data['content']
+            user        = request.user
+            product     = Product.objects.get(id = data['product_id'])
+            
+            Review.objects.create(  
+                user    = user,
+                product = product, 
+                content = content
+            )
+             
+            return JsonResponse({'message' : 'SUCCESS'} , status = 201) 
+        except KeyError:
+            return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
+        except Product.DoesNotExist:
+            return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 404)
+    
     def delete(self, request):
         try:
             data = json.loads(request.body)
@@ -151,3 +177,4 @@ class ProductReviewView(View):
             return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
         except Review.DoesNotExist:
             return JsonResponse({'message' : 'REVIEW_DOES_NOT_EXIST'})
+   
