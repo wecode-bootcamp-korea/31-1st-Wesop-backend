@@ -139,10 +139,9 @@ class ProductReviewView(View):
     def post(self, request):
         try:
             data = json.loads(request.body)
-            content = data['content']
-            
-            product = Product.objects.get(id = request.GET.get('product_id') )
-            user    = request.user
+            content     = data['content']
+            user        = request.user
+            product     = Product.objects.get(id = data['product_id'])
             
             Review.objects.create(  
                 user    = user,
