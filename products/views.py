@@ -139,11 +139,9 @@ class ProductReviewView(View):
     def delete(self, request):
         try:
             data = json.loads(request.body)
-            user        = request.user
-            product_id  = request.GET.get('product_id')
             review      = Review.objects.get(id=data['review_id'])
                 
-            if not Review.objects.filter(user = user , product_id = product_id).exists():
+            if not Review.objects.filter(user = request.user , product_id = data['product_id']).exists():
                 return JsonResponse({'message' : 'UNAUTHORIZED_REQUEST'} , status = 404)
             
             review.delete()
