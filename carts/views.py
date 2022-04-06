@@ -37,18 +37,18 @@ class CartView(View):
         try:
             data       = json.loads(request.body)
             user       = request.user
-            product_id = data['product_id']
+            cart_id    = data['cart_id']
             quantity   = data['quantity']
 
             if quantity <= 0 or quantity >= 21:
                 return JsonResponse({'message': 'INVALID_QUANTITY'}, status=400)
 
-            if Cart.objects.filter(product_id=product_id, user_id=user).exists():
-                cart          = Cart.objects.get(user=user, product_id=product_id)
-                cart.quantity = data['quantity']
-                cart.save()
-                return JsonResponse({'message': 'QUANTITY_CHANGED'}, status=201)
-            return JsonResponse({'message': 'PRODUCT_DOES_NOT_EXIT'}, status=404)
+            if not Cart.objects.filter(id=cart_id, user_id=user).exists():
+                return JsonResponse({'message': 'CART_DOES_NOT_EXIT'}, status=404)
+            cart          = Cart.objects.get(user_id=user, id=cart_id)
+            cart.quantity = quantity
+            cart.save()
+            return JsonResponse({'message': 'QUANTITY_CHANGED'}, status=201)
 
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status=400)
