@@ -135,6 +135,25 @@ class CategoryDetailView(View):
         return JsonResponse({'result':result}, status=200)
     
 class ProductReviewView(View):
+    def get(self, request):
+        try:
+            data = json.loads(request.body)
+            reviews =Review.objects.filter(product_id = data['product_id'])
+            
+            if not reviews.exists():
+                return JsonResponse({'message' : 'PRODUCT_REVIEW_DOES_NOT_EXIST'} , status = 404)
+            
+            result = [{
+                    'review_id' : review.id,
+                    'user'      : review.user.email,
+                    'content'   : review.content
+                } for review in reviews]
+            return JsonResponse({'message' : result} , status =200)
+        except KeyError:
+            return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
+        except Product.DoesNotExist:
+            return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 400)
+    
     @author
     def post(self, request):
         try:
@@ -154,7 +173,7 @@ class ProductReviewView(View):
             return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 404)
-    
+
     def delete(self, request):
         try:
             data = json.loads(request.body)
