@@ -1,16 +1,9 @@
 import json
 
-<<<<<<< HEAD
-from cores.utils  import author
-from django.http  import JsonResponse
-from django.views import View
-from django.http  import JsonResponse
-=======
 from cores.utils      import author
 from django.http      import JsonResponse
 from django.views     import View
 from django.http      import JsonResponse
->>>>>>> main
 from django.db.models import Q
 
 from products.models import Category, Product, Ingredient, SkinType, ProductFeelings, Review
