@@ -1,5 +1,4 @@
 import json
-from unittest import result
 
 from cores.utils      import author
 from django.http      import JsonResponse
@@ -174,3 +173,16 @@ class ProductReviewView(View):
             return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 404)
+    
+    @author
+    def delete(self, request, review_id):
+        review      = Review.objects.filter(user = request.user , id = review_id)
+            
+        if not review.exists():
+            return JsonResponse({'message' : 'UNAUTHORIZED_REQUEST'} , status = 404)
+        
+        review.delete()
+            
+        return JsonResponse({'message' : 'SUCCESS'} , status = 200)
+
+   
