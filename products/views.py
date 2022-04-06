@@ -35,8 +35,12 @@ class ProductListView(View):
         skintype_id   = request.GET.getlist('skintype_id', None)
         scent         = request.GET.get('scent', None)
         feeling_id    = request.GET.get('feeling_id', None)
+        search        = request.GET.get('search', None)
         
         q = Q()
+
+        if search:
+            q &= Q(name__icontains=search)
 
         if category_id:
             q &= Q(category__id=category_id)
@@ -52,9 +56,8 @@ class ProductListView(View):
         
         if feeling_id:
             q &= Q(productfeelings__feeling__id__in=feeling_id)
-        
 
-        products = Product.objects.filter(q)[offset:limit]
+        products = Product.objects.filter(q)[offset:offset+limit]
 
         result = [{
             'id'         : product.id,
@@ -109,7 +112,7 @@ class CategoryListView(View):
         offset = int(request.GET.get('offset', 0))
         limit  = int(request.GET.get('limit', 100))
 
-        categories = Category.objects.all()[offset:limit]
+        categories = Category.objects.all()[offset:offset+limit]
         
         result = [{
             'categoryId'            : category.id,
