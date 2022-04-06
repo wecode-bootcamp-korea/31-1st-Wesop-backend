@@ -8,7 +8,7 @@ from cores.timestamp import TimeStamp
 class Cart(TimeStamp):
     user     = models.ForeignKey(User, on_delete=models.CASCADE)
     product  = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(default=1)
 
     class Meta:
         db_table = 'carts'
