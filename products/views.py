@@ -3,7 +3,7 @@ from django.views import View
 from django.http  import JsonResponse
 from django.db.models import Q
 
-from products.models import Product, Ingredient, SkinType, ProductFeelings
+from products.models import Category, Product, Ingredient, SkinType, ProductFeelings
 
 class RecommendedView(View):
     def get(self, request, product_id):
@@ -45,7 +45,7 @@ class ProductListView(View):
             q &= Q(productingredient__ingredient__id__in=ingredient_id)
         
         if skintype_id:
-            q &= Q(skintypes__skin_type__id__in=skintype_id)
+            q &= Q(productskintype__skin_type__id__in=skintype_id)
         
         if feeling_id:
             q &= Q(productfeelings__feeling__id__in=feeling_id)
@@ -99,3 +99,34 @@ class ProductDetailView(View):
             return JsonResponse({'message' : 'KEY_ERROR'} , status = 404)
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_NAME_ERROR'} , status = 404)
+
+
+class CategoryListView(View):
+    def get(self, request):
+        offset = int(request.GET.get('offset', 0))
+        limit  = int(request.GET.get('limit', 100))
+
+        categories = Category.objects.all()[offset:limit]
+        
+        result = [{
+            'categoryId'            : category.id,
+            'categoryName'          : category.category_name,
+            'categoryDescription'   : category.main_description,
+            'categorySubDescription': category.sub_description
+        } for category in categories]
+
+        return JsonResponse({'result':result}, status=200)
+
+
+class CategoryDetailView(View):
+    def get(self, request, category_id):        
+        category = Category.objects.get(id=category_id)
+        
+        result = {
+            'categoryId'            : category.id,
+            'categoryName'          : category.category_name,
+            'categoryDescription'   : category.main_description,
+            'categorySubDescription': category.sub_description
+        }
+
+        return JsonResponse({'result':result}, status=200)
