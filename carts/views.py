@@ -16,14 +16,17 @@ class CartView(View):
             data       = json.loads(request.body)
             user       = request.user
             product_id = data['product_id']
+            carts      = Cart.objects.filter(user_id=user, product_id=product_id)
 
-            if Cart.objects.filter(product_id=product_id).exists():
-                cart = Cart.objects.get(product_id=product_id)
-                if cart.quantity <= 0 or cart.quantity >= 5:
-                    return JsonResponse({'message': 'INVALID_QUANTITY'}, status=400)
-                cart.quantity += 1
-                cart.save()
-                return JsonResponse({'message': 'QUANTITY_CHANGED'}, status=200)
+            if not Product.objects.filter(id=product_id).exists():
+                return JsonResponse({'message': 'PRODUCT_DOES_NOT_EXIT'}, status=404)
+            if carts.exists():
+                for cart in carts:
+                    if cart.quantity <= 0 or cart.quantity >= 20:
+                        return JsonResponse({'message': 'INVALID_QUANTITY'}, status=400)
+                    cart.quantity += 1
+                    cart.save()
+                    return JsonResponse({'message': 'QUANTITY_CHANGED'}, status=200)
 
             Cart.objects.create(
                 user       = user,
@@ -34,8 +37,6 @@ class CartView(View):
 
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status=400)
-        except Product.DoesNotExist:
-            return JsonResponse({'message': 'PRODUCT_DOES_NOT_EXIT'}, status=400)
 
     @author
     def get(self, request):
@@ -46,10 +47,13 @@ class CartView(View):
             return JsonResponse({'message': 'INVALID_USER'}, status=400)
 
         result = [{
-            'user_id'   : user.id,
-            'cart_id'   : cart.id,
-            'quantity'  : cart.quantity,
-            'product_id': cart.product.id
+            'userId'     : user.id,
+            'cartId'     : cart.id,
+            'quantity'   : cart.quantity,
+            'productId'  : cart.product.id,
+            'productName': cart.product.name,
+            'productSize': cart.product.size,
+            'totalPrice' : int(cart.quantity * cart.product.price)
             }for cart in carts]
 
         return JsonResponse({'message': result}, status=200)
@@ -57,17 +61,19 @@ class CartView(View):
     @author
     def delete(self, request):
         try:
-            product_id = request.GET.getlist('product_id')
+            cart_id = request.GET.getlist('cart_id')
             user       = request.user
 
-            for product in product_id:
-                if not Cart.objects.filter(user_id=user, product_id=product).exists():
-                    return JsonResponse({'message': 'PRODUCT_DOES_NOT_EXIT'}, status=400)
-                Cart.objects.filter(user_id=user, product_id=product).delete()
+            if cart_id == []:
+                return JsonResponse({'message': 'LIST_EMPTY'}, status=400)
+            for cart in cart_id:
+                if not Cart.objects.filter(id=cart).exists():
+                    return JsonResponse({'message': 'CART_DOES_NOT_EXIT'}, status=404)
+                Cart.objects.filter(id=cart).delete()
             return JsonResponse({'message': 'CART_DELETED'}, status=200)
 
         except Cart.DoesNotExist:
-            return JsonResponse({'message': 'CART_DOES_NOT_EXIT'}, status=400)
+            return JsonResponse({'message': 'CART_DOES_NOT_EXIT'}, status=404)
         except ValueError:
             return JsonResponse({'message': 'VALUE_ERROR'}, status=400)
 
@@ -80,7 +86,7 @@ class CartView(View):
             quantity   = data['quantity']
             product    = Product.objects.get(id=product_id)
 
-            if quantity <= 0 or quantity >= 6:
+            if quantity <= 0 or quantity >= 21:
                 return JsonResponse({'message': 'INVALID_QUANTITY'}, status=400)
 
             if not Cart.objects.filter(product_id=product_id, user_id=user).exists():

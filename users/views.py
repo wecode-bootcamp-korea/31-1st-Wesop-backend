@@ -61,10 +61,10 @@ def sign_up(request):
         return JsonResponse({
                 'message': 'SUCCESS',
                 'token': token,
-                'first_Name': user.first_name,
-                'last_Name': user.last_name,
+                'firstName': user.first_name,
+                'lastName': user.last_name,
                 'email': user.email,
-                'user_id': user.id
+                'userId': user.id
             }, status=201)
 
     except ValidationError:
@@ -96,10 +96,10 @@ def log_in(request):
         return JsonResponse({
                 'message': 'SUCCESS',
                 'token': token,
-                'first_Name': user.first_name,
-                'last_Name': user.last_name,
+                'firstName': user.first_name,
+                'lastName': user.last_name,
                 'email': user.email,
-                'user_id': user.id
+                'userId': user.id
             }, status=200)
 
     except User.DoesNotExist:
