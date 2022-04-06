@@ -100,16 +100,30 @@ class ProductDetailView(View):
         except Product.DoesNotExist:
             return JsonResponse({'message' : 'PRODUCT_NAME_ERROR'} , status = 404)
 
+
 class CategoryListView(View):
     def get(self, request):
-        category_id   = request.GET.get('category_id', None)
-        offset        = int(request.GET.get('offset', 0))
-        limit         = int(request.GET.get('limit', 100))
+        offset = int(request.GET.get('offset', 0))
+        limit  = int(request.GET.get('limit', 100))
 
-        if category_id == None:
-            categories = Category.objects.all()[offset:limit]
-        else:
-            categories = Category.objects.filter(id=category_id)[offset:limit]
+        categories = Category.objects.all()[offset:limit]
+        
+        result = [{
+            'categoryId'            : category.id,
+            'categoryName'          : category.category_name,
+            'categoryDescription'   : category.main_description,
+            'categorySubDescription': category.sub_description
+        } for category in categories]
+
+        return JsonResponse({'result':result}, status=200)
+
+
+class CategoryDetailView(View):
+    def get(self, request, category_id):
+        offset = int(request.GET.get('offset', 0))
+        limit  = int(request.GET.get('limit', 100))
+        
+        categories = Category.objects.filter(id=category_id)[offset:limit]
         
         result = [{
             'categoryId'            : category.id,
