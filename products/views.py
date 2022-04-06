@@ -45,7 +45,7 @@ class ProductListView(View):
             q &= Q(productingredient__ingredient__id__in=ingredient_id)
         
         if skintype_id:
-            q &= Q(skintypes__skin_type__id__in=skintype_id)
+            q &= Q(productskintype__skin_type__id__in=skintype_id)
         
         if feeling_id:
             q &= Q(productfeelings__feeling__id__in=feeling_id)
