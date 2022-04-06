@@ -119,17 +119,14 @@ class CategoryListView(View):
 
 
 class CategoryDetailView(View):
-    def get(self, request, category_id):
-        offset = int(request.GET.get('offset', 0))
-        limit  = int(request.GET.get('limit', 100))
+    def get(self, request, category_id):        
+        category = Category.objects.get(id=category_id)
         
-        categories = Category.objects.filter(id=category_id)[offset:limit]
-        
-        result = [{
+        result = {
             'categoryId'            : category.id,
             'categoryName'          : category.category_name,
             'categoryDescription'   : category.main_description,
             'categorySubDescription': category.sub_description
-        } for category in categories]
+        }
 
         return JsonResponse({'result':result}, status=200)
