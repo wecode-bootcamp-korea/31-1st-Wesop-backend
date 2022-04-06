@@ -1,9 +1,12 @@
+import json
+
+from cores.utils  import author
 from django.http  import JsonResponse
 from django.views import View
 from django.http  import JsonResponse
 from django.db.models import Q
 
-from products.models import Category, Product, Ingredient, SkinType, ProductFeelings
+from products.models import Category, Product, Ingredient, SkinType, ProductFeelings, Review
 
 class RecommendedView(View):
     def get(self, request, product_id):
@@ -130,3 +133,23 @@ class CategoryDetailView(View):
         }
 
         return JsonResponse({'result':result}, status=200)
+    
+class ProductReviewView(View):
+    @author
+    def delete(self, request):
+        try:
+            data = json.loads(request.body)
+            user        = request.user
+            product_id  = request.GET.get('product_id')
+            review      = Review.objects.get(id=data['review_id'])
+                
+            if not Review.objects.filter(user = user , product_id = product_id).exists():
+                return JsonResponse({'message' : 'UNAUTHORIZED_REQUEST'} , status = 404)
+            
+            review.delete()
+                
+            return JsonResponse({'message' : 'SUCCESS'} , status = 200)
+        except KeyError:
+            return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
+        except Review.DoesNotExist:
+            return JsonResponse({'message' : 'REVIEW_DOES_NOT_EXIST'})
