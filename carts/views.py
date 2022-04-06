@@ -80,7 +80,7 @@ class CartView(View):
             quantity   = data['quantity']
             product    = Product.objects.get(id=product_id)
 
-            if quantity <= 0 or quantity >= 5:
+            if quantity <= 0 or quantity >= 6:
                 return JsonResponse({'message': 'INVALID_QUANTITY'}, status=400)
 
             if not Cart.objects.filter(product_id=product_id, user_id=user).exists():
