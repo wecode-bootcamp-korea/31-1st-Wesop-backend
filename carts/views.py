@@ -73,17 +73,14 @@ class CartView(View):
     @author
     def delete(self, request):
         try:
-            cart_id = request.GET.getlist('cart_id')
-            user    = request.user
+            cart_ids = request.GET.getlist('cart_ids')
+            user     = request.user
 
-            if not cart_id:
+            if not cart_ids:
                 return JsonResponse({'message': 'LIST_EMPTY'}, status=400)
 
-            for cart in cart_id:
-                Cart.objects.get(id=cart, user_id=user).delete()
-                return JsonResponse({'message': 'CART_DELETED'}, status=200)
+            Cart.objects.filter(id__in=cart_ids, user_id=user).delete()
+            return JsonResponse({'message': 'CART_DELETED'}, status=200)
 
-        except Cart.DoesNotExist:
-            return JsonResponse({'message': 'CART_DOES_NOT_EXIT'}, status=404)
         except ValueError:
             return JsonResponse({'message': 'VALUE_ERROR'}, status=400)
