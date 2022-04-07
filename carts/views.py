@@ -23,7 +23,6 @@ class CartView(View):
                 cart.save()
             else:
                 return JsonResponse({'message': 'INVALID_QUANTITY'}, status=200)
-
             return JsonResponse({'message': 'CART_CREATED'}, status=201)
 
         except Cart.DoesNotExist:
@@ -60,15 +59,13 @@ class CartView(View):
             if quantity <= 0 or quantity >= 21:
                 return JsonResponse({'message': 'INVALID_QUANTITY'}, status=400)
 
-            if Cart.objects.filter(id=cart_id, user_id=user).exists():
-                cart = Cart.objects.get(id=cart_id, user=user)
+            if Cart.objects.filter(id=cart_id).exists():
+                cart          = Cart.objects.get(id=cart_id, user=user)
                 cart.quantity = data['quantity']
                 cart.save()
                 return JsonResponse({'message': 'QUANTITY_CHANGED'}, status=201)
 
-            return JsonResponse({'message': 'PRODUCT_DOES_NOT_EXIT'}, status=404)
+            return JsonResponse({'message': 'CART_DOES_NOT_EXIT'}, status=404)
 
-        except Cart.DoesNotExist:
-            return JsonResponse({'message': "INVALID_PRODUCT"})
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status=400)
