@@ -69,3 +69,18 @@ class CartView(View):
 
         except KeyError:
             return JsonResponse({'message': 'KEY_ERROR'}, status=400)
+
+    @author
+    def delete(self, request):
+        try:
+            cart_ids = request.GET.getlist('cart_ids')
+            user     = request.user
+
+            if not cart_ids:
+                return JsonResponse({'message': 'LIST_EMPTY'}, status=400)
+
+            Cart.objects.filter(id__in=cart_ids, user_id=user).delete()
+            return JsonResponse({'message': 'CART_DELETED'}, status=200)
+
+        except ValueError:
+            return JsonResponse({'message': 'VALUE_ERROR'}, status=400)
