@@ -1,9 +1,12 @@
-from django.http  import JsonResponse
-from django.views import View
-from django.http  import JsonResponse
+import json
+
+from cores.utils      import author
+from django.http      import JsonResponse
+from django.views     import View
+from django.http      import JsonResponse
 from django.db.models import Q
 
-from products.models import Category, Product, Ingredient, SkinType, ProductFeelings
+from products.models import Category, Product, Ingredient, SkinType, ProductFeelings, Review
 
 class RecommendedView(View):
     def get(self, request, product_id):
@@ -32,8 +35,12 @@ class ProductListView(View):
         skintype_id   = request.GET.getlist('skintype_id', None)
         scent         = request.GET.get('scent', None)
         feeling_id    = request.GET.get('feeling_id', None)
+        search        = request.GET.get('search', None)
         
         q = Q()
+
+        if search:
+            q &= Q(name__icontains=search)
 
         if category_id:
             q &= Q(category__id=category_id)
@@ -49,9 +56,8 @@ class ProductListView(View):
         
         if feeling_id:
             q &= Q(productfeelings__feeling__id__in=feeling_id)
-        
 
-        products = Product.objects.filter(q)[offset:limit]
+        products = Product.objects.filter(q)[offset:offset+limit]
 
         result = [{
             'id'         : product.id,
@@ -81,6 +87,7 @@ class ProductDetailView(View):
             skin_type        = SkinType.objects.filter(productskintype__product_id = product_id)
             feelings         = ProductFeelings.objects.filter(product = product_id)
             product_detail = {
+                'id'                : product.id,
                 'name'              : product.name,
                 'price'             : product.price,
                 'size'              : product.size,
@@ -106,7 +113,7 @@ class CategoryListView(View):
         offset = int(request.GET.get('offset', 0))
         limit  = int(request.GET.get('limit', 100))
 
-        categories = Category.objects.all()[offset:limit]
+        categories = Category.objects.all()[offset:offset+limit]
         
         result = [{
             'categoryId'            : category.id,
@@ -130,3 +137,56 @@ class CategoryDetailView(View):
         }
 
         return JsonResponse({'result':result}, status=200)
+    
+class ProductReviewView(View):
+    def get(self, request):
+        try:
+            data = json.loads(request.body)
+            reviews =Review.objects.filter(product_id = data['product_id'])
+            
+            if not reviews.exists():
+                return JsonResponse({'message' : 'PRODUCT_REVIEW_DOES_NOT_EXIST'} , status = 404)
+            
+            result = [{
+                    'review_id' : review.id,
+                    'user'      : review.user.email,
+                    'content'   : review.content
+                } for review in reviews]
+            return JsonResponse({'message' : result} , status =200)
+        except KeyError:
+            return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
+        except Product.DoesNotExist:
+            return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 400)
+    
+    @author
+    def post(self, request):
+        try:
+            data = json.loads(request.body)
+            content     = data['content']
+            user        = request.user
+            product     = Product.objects.get(id = data['product_id'])
+            
+            Review.objects.create(  
+                user    = user,
+                product = product, 
+                content = content
+            )
+             
+            return JsonResponse({'message' : 'SUCCESS'} , status = 201) 
+        except KeyError:
+            return JsonResponse({'message': 'KEY_ERROR'} , status = 400)
+        except Product.DoesNotExist:
+            return JsonResponse({'message' : 'PRODUCT_DOES_NOT_EXIST'} , status = 404)
+    
+    @author
+    def delete(self, request, review_id):
+        review      = Review.objects.filter(user = request.user , id = review_id)
+            
+        if not review.exists():
+            return JsonResponse({'message' : 'UNAUTHORIZED_REQUEST'} , status = 404)
+        
+        review.delete()
+            
+        return JsonResponse({'message' : 'SUCCESS'} , status = 200)
+
+   
