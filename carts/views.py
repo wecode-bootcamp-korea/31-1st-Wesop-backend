@@ -21,9 +21,11 @@ class CartView(View):
             if not created and cart.quantity < 20:
                 cart.quantity += 1
                 cart.save()
-            else:
+                return JsonResponse({'message': 'SUCCESS'}, status=200)
+            elif not created and cart.quantity > 19:
                 return JsonResponse({'message': 'INVALID_QUANTITY'}, status=200)
-            return JsonResponse({'message': 'CART_CREATED'}, status=201)
+            else:
+                return JsonResponse({'message': 'SUCCESS'}, status=201)
 
         except Cart.DoesNotExist:
             return JsonResponse({'message': 'CART_DOES_NOT_EXIT'}, status=400)
