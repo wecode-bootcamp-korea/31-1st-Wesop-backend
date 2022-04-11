@@ -10,7 +10,7 @@
             백엔드 3명 (김수훈, 고현영, 이산)
 ## 사용기술
 - Front-End : React.js, React Router, SASS
-- Back-End : Python, Django, AWS, JWT, bcrypt, MySQL
+- Back-End : Python, Django, AWS, JWT, bcrypt, MySQL, CORS headers, RESTful API
 - 협업 툴 : Git, Trello, Slack, Notion, Google Spreadsheet
 ## 구현 기능
 - 로그인 / 회원가입
