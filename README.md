@@ -1,6 +1,6 @@
 # Wesop 프로젝트
 - 시연영상 : https://www.youtube.com/watch?v=BDQ6BGgMt2Q&t=8s
-- 화장품 브랜드 <a href=“https://www.aesop.com/kr/”>이솝</a>의 홈페이지 클론코딩
+- 화장품 브랜드 <a href=“https://www.aesop.com/kr/”>이솝</a>의 홈페이지를 모티브
 - 사이트 UI만 참고, 외부 라이브러리 사용 없이 코드는 모두 직접 작성
 - 백엔드 깃헙 주소 : https://github.com/wecode-bootcamp-korea/31-1st-Wesop-backend
 - 프론트엔드 깃헙 주소 : https://github.com/wecode-bootcamp-korea/31-1st-Wesop-frontend
